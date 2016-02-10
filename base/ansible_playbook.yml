@@ -1,0 +1,56 @@
+- hosts: default
+  sudo: yes
+  user: vagrant
+  tasks:
+    - name: apt-get update
+      apt: update_cache=yes
+    - name: install required packages
+      apt: name={{ item }} state=present
+      with_items:
+        - g++
+        - mysql-server-5.6
+        - mysql-client-5.6
+        - libmysqlclient-dev
+        - libmemcached-dev
+        - libzmq-dev
+        - libzmq3
+        - python3
+        - python-dev
+        - python-setuptools
+        - python-pip
+        - python-apt
+        - python-zmq
+        - python-mysqldb
+        - nginx
+        - vim
+        - git
+
+    # pip install
+    - name: pip install
+      easy_install: name=pip state=latest
+
+    # pip package install
+    - name: virtualenv 
+      pip: name=virtualenv
+    - name: requests
+      pip: name=requests
+    - name: ipython
+      pip: name=ipython
+    - name: pyzmq 
+      pip: name=pyzmq
+    - name: jupyter
+      pip: name=jupyter
+    - name: Jinja
+      pip: name=Jinja2
+    - name: libmysqlclient-dev
+      pip: name=MySQL-python
+    - name: oauthlib
+      pip: name=oauthlib
+
+    # config nginx
+    - copy: src=nginx.conf dest=/etc/nginx/nginx.conf owner=root group=root mode=0644
+    - file: path=/etc/nginx/sites-available/default state=absent
+
+    # service
+    - service: name=mysql state=running
+    - service: name=nginx state=running
